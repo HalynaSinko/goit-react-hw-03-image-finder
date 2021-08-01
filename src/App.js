@@ -1,22 +1,12 @@
 import { Component } from "react";
-import Searchbar from "./Components/Searchbar/Searchbar";
-import LoaderSpinner from "./Components/Loader/Loader";
-import ImageGallery from "./Components/ImageGallery/ImageGallery";
+import Searchbar from "./Components/Searchbar";
+import LoaderSpinner from "./Components/Loader";
+import ImageGallery from "./Components/ImageGallery";
 import Button from "./Components/Button";
 import Modal from "./Components/Modal/";
-import s from "./App.module.css";
-
 import apiImages from "./serveces/apiImages";
 
-// const API_KEY = "22026737-4ace7165bbd581938b49ded93";
-// const BASE_URL = "https://pixabay.com/api/";
-
-// const status = {
-//   IDEL: "idel",
-//   PENDING: "pending",
-//   REJECT: "reject",
-//   RESOLVE: "resolve",
-// };
+import s from "./App.module.css";
 
 class App extends Component {
   state = {
@@ -47,7 +37,7 @@ class App extends Component {
       apiImages
         .fetchImages(searchQuery, page)
         .then(({ hits }) => {
-          console.log(hits);
+          // console.log(hits);
 
           if (hits.length === 0) {
             this.setState({
@@ -80,7 +70,7 @@ class App extends Component {
   };
 
   hendleSubmit = (searchQuery) => {
-    this.setState({ searchQuery, images: [], page: 1 });
+    this.setState({ searchQuery, images: [], page: 1, error: "" });
   };
 
   toggelModal = () => {

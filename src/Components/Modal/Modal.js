@@ -16,7 +16,6 @@ class Modal extends Component {
 
   hendleKeyDown = (e) => {
     if (e.code === "Escape") {
-      // console.log("closs modal");
       this.props.onClose();
     }
   };
@@ -41,7 +40,3 @@ class Modal extends Component {
 }
 
 export default Modal;
-
-// {
-//   /* <img src="" alt="" />; */
-// }
