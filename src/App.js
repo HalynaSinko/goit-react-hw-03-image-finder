@@ -3,8 +3,10 @@ import Searchbar from "./Components/Searchbar/Searchbar";
 import ImageGallery from "./Components/ImageGallery/ImageGallery";
 import Button from "./Components/Button";
 
-const API_KEY = "22026737-4ace7165bbd581938b49ded93";
-const BASE_URL = "https://pixabay.com/api/";
+import apiImages from "./serveces/apiImages";
+
+// const API_KEY = "22026737-4ace7165bbd581938b49ded93";
+// const BASE_URL = "https://pixabay.com/api/";
 
 // const status = {
 //   IDEL: "idel",
@@ -16,7 +18,7 @@ const BASE_URL = "https://pixabay.com/api/";
 class App extends Component {
   state = {
     searchQuery: "",
-    page: "1",
+    page: 1,
     images: [],
   };
 
@@ -36,19 +38,12 @@ class App extends Component {
     if (searchQuery !== prevState.searchQuery) {
       this.setState({ images: [], page: 1 });
 
-      const url = `${BASE_URL}?q=${searchQuery}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`;
-
-      fetch(url)
-        .then((response) => {
-          // console.log(response);
-          return response.json();
-        })
-        .then(({ hits }) => {
-          // console.log(hits);
-          this.setState((prevState) => ({
-            images: [...prevState.images, ...hits],
-          }));
-        });
+      apiImages.fetchImages(searchQuery, page).then(({ hits }) => {
+        // console.log(hits);
+        this.setState((prevState) => ({
+          images: [...prevState.images, ...hits],
+        }));
+      });
     }
   }
 
