@@ -66,10 +66,18 @@ class App extends Component {
             images: [...prevState.images, ...hits],
             page: prevState.page + 1,
           }));
+          this.smoothScroll();
         })
         .catch((error) => this.setState({ error }))
         .finally(() => this.setState({ loading: false }));
     }, 1000);
+  };
+
+  smoothScroll = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   hendleSubmit = (searchQuery) => {
