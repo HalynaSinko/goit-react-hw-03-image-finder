@@ -1,6 +1,12 @@
 import s from "./ImageGalleryItem.module.css";
 
-const ImageGalleryItem = ({ id, webformatURL, largeImageURL, tags }) => {
+const ImageGalleryItem = ({
+  id,
+  webformatURL,
+  largeImageURL,
+  tags,
+  onClick,
+}) => {
   return (
     <li key={id} className={s.item}>
       <img
@@ -8,6 +14,7 @@ const ImageGalleryItem = ({ id, webformatURL, largeImageURL, tags }) => {
         data-source={largeImageURL}
         alt={tags}
         className={s.image}
+        onClick={(event) => onClick(event.currentTarget)}
       />
     </li>
   );

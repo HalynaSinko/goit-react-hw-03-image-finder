@@ -3,6 +3,7 @@ import Searchbar from "./Components/Searchbar/Searchbar";
 import LoaderSpinner from "./Components/Loader/Loader";
 import ImageGallery from "./Components/ImageGallery/ImageGallery";
 import Button from "./Components/Button";
+import Modal from "./Components/Modal/";
 import s from "./App.module.css";
 
 import apiImages from "./serveces/apiImages";
@@ -23,20 +24,16 @@ class App extends Component {
     page: 1,
     images: [],
     loading: false,
-    error: null,
     showButtom: false,
+    showModal: false,
+    imageModal: "",
+    error: null,
   };
 
-  componentDidMount() {
-    console.log("приложение замаунтилось");
-  }
-
   componentDidUpdate(prevProps, prevState) {
-    // console.log("приложение обновилосью - изменился стейт");
     // console.log(prevState);
     // console.log(this.state);
     const { searchQuery } = this.state;
-    // console.log(searchQuery, page, images);
 
     if (searchQuery !== prevState.searchQuery) {
       this.getImages();
@@ -53,7 +50,9 @@ class App extends Component {
           console.log(hits);
 
           if (hits.length === 0) {
-            console.log("error");
+            this.setState({
+              error: "Sorry, search returned no results. Enter correct query.",
+            });
           }
 
           if (hits.length !== 12) {
@@ -84,15 +83,28 @@ class App extends Component {
     this.setState({ searchQuery, images: [], page: 1 });
   };
 
+  toggelModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
+
+  hendleOnImageClick = (event) => {
+    this.setState({ imageModal: event });
+    this.toggelModal();
+  };
+
   render() {
-    const { images, loading, showButtom } = this.state;
+    const { images, loading, showButtom, showModal, imageModal, error } =
+      this.state;
     return (
       <div className={s.container}>
         <Searchbar onSubmit={this.hendleSubmit} />
         {loading && <LoaderSpinner />}
-        {this.state.error && <p>{this.state.error}</p>}
-        <ImageGallery images={images} />
+        {error && <p>{error}</p>}
+        <ImageGallery images={images} onClick={this.hendleOnImageClick} />
         {showButtom && <Button onLoadMore={this.getImages} />}
+        {showModal && (
+          <Modal imageModal={imageModal} onClose={this.toggelModal} />
+        )}
       </div>
     );
   }

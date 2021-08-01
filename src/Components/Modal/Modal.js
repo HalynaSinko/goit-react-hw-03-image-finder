@@ -1,19 +1,47 @@
 import { Component } from "react";
+import { createPortal } from "react-dom";
 
 import s from "./Modal.module.css";
 
+const modalRoot = document.querySelector("#modal-root");
+
 class Modal extends Component {
-  state = {};
+  componentDidMount() {
+    window.addEventListener("keydown", this.hendleKeyDown);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this.hendleKeyDown);
+  }
+
+  hendleKeyDown = (e) => {
+    if (e.code === "Escape") {
+      // console.log("closs modal");
+      this.props.onClose();
+    }
+  };
+
+  hendleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      this.props.onClose();
+    }
+  };
 
   render() {
-    return (
-      <div className={s.overlay}>
+    const { imageModal } = this.props;
+    return createPortal(
+      <div className={s.overlay} onClick={this.hendleBackdropClick}>
         <div className={s.modal}>
-          <img src="" alt="" />
+          <img src={imageModal.dataset.source} alt={imageModal.alt} />{" "}
         </div>
-      </div>
+      </div>,
+      modalRoot
     );
   }
 }
 
 export default Modal;
+
+// {
+//   /* <img src="" alt="" />; */
+// }
