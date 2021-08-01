@@ -1,7 +1,9 @@
 import { Component } from "react";
 import Searchbar from "./Components/Searchbar/Searchbar";
+import LoaderSpinner from "./Components/Loader/Loader";
 import ImageGallery from "./Components/ImageGallery/ImageGallery";
 import Button from "./Components/Button";
+import s from "./App.module.css";
 
 import apiImages from "./serveces/apiImages";
 
@@ -75,10 +77,11 @@ class App extends Component {
   };
 
   render() {
-    const { images, showButtom } = this.state;
+    const { images, loading, showButtom } = this.state;
     return (
-      <div className="App">
+      <div className={s.container}>
         <Searchbar onSubmit={this.hendleSubmit} />
+        {loading && <LoaderSpinner />}
         {this.state.error && <p>{this.state.error}</p>}
         <ImageGallery images={images} />
         {showButtom && <Button onLoadMore={this.getImages} />}
