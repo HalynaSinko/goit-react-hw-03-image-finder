@@ -20,6 +20,9 @@ class App extends Component {
     searchQuery: "",
     page: 1,
     images: [],
+    loading: false,
+    error: null,
+    showButtom: false,
   };
 
   componentDidMount() {
@@ -27,47 +30,61 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("приложение обновилосью - изменился стейт");
-    console.log(prevState);
-    console.log(this.state);
-    const { searchQuery, page } = this.state;
+    // console.log("приложение обновилосью - изменился стейт");
+    // console.log(prevState);
+    // console.log(this.state);
+    const { searchQuery } = this.state;
     // console.log(searchQuery, page, images);
 
-    // const url = `${BASE_URL}?q=${searchQuery}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`;
-
     if (searchQuery !== prevState.searchQuery) {
-      this.setState({ images: [], page: 1 });
-
-      apiImages.fetchImages(searchQuery, page).then(({ hits }) => {
-        // console.log(hits);
-        this.setState((prevState) => ({
-          images: [...prevState.images, ...hits],
-        }));
-      });
+      this.getImages();
     }
   }
 
-  pegeIncrement = () => {
-    this.setState((prevState) => ({ page: prevState.page + 1 }));
+  getImages = () => {
+    const { searchQuery, page } = this.state;
+    this.setState({ loading: true });
+    setTimeout(() => {
+      apiImages
+        .fetchImages(searchQuery, page)
+        .then(({ hits }) => {
+          console.log(hits);
+
+          if (hits.length === 0) {
+            console.log("error");
+          }
+
+          if (hits.length !== 12) {
+            this.setState({ showButtom: false });
+          } else {
+            this.setState({ showButtom: true });
+          }
+
+          this.setState((prevState) => ({
+            images: [...prevState.images, ...hits],
+            page: prevState.page + 1,
+          }));
+        })
+        .catch((error) => this.setState({ error }))
+        .finally(() => this.setState({ loading: false }));
+    }, 1000);
   };
 
-  hendleSearchQuery = (searchQuery) => {
-    this.setState({ searchQuery });
+  hendleSubmit = (searchQuery) => {
+    this.setState({ searchQuery, images: [], page: 1 });
   };
 
   render() {
-    const { images } = this.state;
+    const { images, showButtom } = this.state;
     return (
       <div className="App">
-        <Searchbar onSubmit={this.hendleSearchQuery} />
+        <Searchbar onSubmit={this.hendleSubmit} />
+        {this.state.error && <p>{this.state.error}</p>}
         <ImageGallery images={images} />
-        <Button onLoadMore={this.pegeIncrement} />
+        {showButtom && <Button onLoadMore={this.getImages} />}
       </div>
     );
   }
 }
 
 export default App;
-
-// const API_KEY = "22026737-4ace7165bbd581938b49ded93";
-// const BASE_URL = "https://pixabay.com/api/";
