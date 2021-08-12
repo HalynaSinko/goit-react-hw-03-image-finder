@@ -14,15 +14,13 @@ class App extends Component {
     page: 1,
     images: [],
     loading: false,
-    showButtom: false,
+    showButton: false,
     showModal: false,
     imageModal: "",
     error: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    // console.log(prevState);
-    // console.log(this.state);
     const { searchQuery } = this.state;
 
     if (searchQuery !== prevState.searchQuery) {
@@ -32,34 +30,32 @@ class App extends Component {
 
   getImages = () => {
     const { searchQuery, page } = this.state;
-    this.setState({ loading: true });
-    setTimeout(() => {
-      apiImages
-        .fetchImages(searchQuery, page)
-        .then(({ hits }) => {
-          // console.log(hits);
+    this.setState({
+      loading: true,
+      showButton: false,
+    });
 
-          if (hits.length === 0) {
-            this.setState({
-              error: "Sorry, search returned no results. Enter correct query.",
-            });
-          }
+    apiImages
+      .fetchImages(searchQuery, page)
+      .then(({ hits, total }) => {
+        if (hits.length === 0) {
+          this.setState({
+            error: "Sorry, search returned no results. Enter correct query.",
+          });
+        }
 
-          if (hits.length !== 12) {
-            this.setState({ showButtom: false });
-          } else {
-            this.setState({ showButtom: true });
-          }
+        if (hits.length === 12 && total - 12 * page > 0) {
+          this.setState({ showButton: true });
+        }
 
-          this.setState((prevState) => ({
-            images: [...prevState.images, ...hits],
-            page: prevState.page + 1,
-          }));
-          this.smoothScroll();
-        })
-        .catch((error) => this.setState({ error }))
-        .finally(() => this.setState({ loading: false }));
-    }, 1000);
+        this.setState((prevState) => ({
+          images: [...prevState.images, ...hits],
+          page: prevState.page + 1,
+        }));
+        this.smoothScroll();
+      })
+      .catch((error) => this.setState({ error }))
+      .finally(() => this.setState({ loading: false }));
   };
 
   smoothScroll = () => {
@@ -83,7 +79,7 @@ class App extends Component {
   };
 
   render() {
-    const { images, loading, showButtom, showModal, imageModal, error } =
+    const { images, loading, showButton, showModal, imageModal, error } =
       this.state;
     return (
       <div className={s.container}>
@@ -91,7 +87,7 @@ class App extends Component {
         {loading && <LoaderSpinner />}
         {error && <p>{error}</p>}
         <ImageGallery images={images} onClick={this.hendleOnImageClick} />
-        {showButtom && <Button onLoadMore={this.getImages} />}
+        {showButton && <Button onLoadMore={this.getImages} />}
         {showModal && (
           <Modal imageModal={imageModal} onClose={this.toggelModal} />
         )}
