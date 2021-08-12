@@ -8,7 +8,6 @@ class Searchbar extends Component {
     searchQuery: "",
   };
   handleChangeInput = (event) => {
-    // console.log(event.target.value);
     this.setState({ searchQuery: event.target.value.toLowerCase() });
   };
 
